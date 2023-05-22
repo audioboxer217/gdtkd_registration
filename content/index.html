@@ -18,30 +18,30 @@
 <body>
   <div class="container">
     <h1>Registration Form</h1>
-    <form action="/register" method="post" id="eventRegistration">
+    <form action="register" method="post" id="eventRegistration">
       <label for="inputName" class="form-check-label">Competitor Name</label>
       <div class="row g-3">
         <div class="col">
-          <input type="text" class="form-control" placeholder="First name" aria-label="First name">
+          <input type="text" class="form-control" placeholder="First name" aria-label="First name" required>
         </div>
         <div class="col">
-          <input type="text" class="form-control" placeholder="Last name" aria-label="Last name">
+          <input type="text" class="form-control" placeholder="Last name" aria-label="Last name" required>
         </div>
       </div>
       <div class="row g-3">
         <div class="col">
           <label for="inputEmail" class="form-check-label">Email</label>
-          <input type="email" class="form-control" id="inputEmail">
+          <input type="email" class="form-control" id="inputEmail" required>
         </div>
         <div class="col">
           <label for="inputPhone" class="form-check-label">Phone</label>
-          <input type="phone" class="form-control" id="inputPhone">
+          <input type="phone" class="form-control" id="inputPhone" required>
         </div>
       </div>
       <div class="row g-3">
         <div class="col-12">
           <label for="inputAddress" class="form-check-label">Address</label>
-          <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+          <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St" required>
         </div>
         <div class="col-12">
           <label for="inputAddress2" class="form-check-label">Address 2</label>
@@ -49,11 +49,11 @@
         </div>
         <div class="col-md-6">
           <label for="inputCity" class="form-check-label">City</label>
-          <input type="text" class="form-control zip-lookup-field-city-title-case" id="inputCity">
+          <input type="text" class="form-control zip-lookup-field-city-title-case" id="inputCity" required>
         </div>
         <div class="col-md-4">
           <label for="inputState" class="form-check-label">State</label>
-          <select id="inputState" class="form-select zip-lookup-field-state">
+          <select id="inputState" class="form-select zip-lookup-field-state" required>
             <option selected>Choose...</option>
             <option value="AK">Alaska</option>
             <option value="AL">Alabama</option>
@@ -111,7 +111,7 @@
         </div>
         <div class="col-md-2">
           <label for="inputZip" class="form-check-label">Zip</label>
-          <input type="text" class="form-control zip-lookup-field-zipcode" id="inputZip">
+          <input type="text" class="form-control zip-lookup-field-zipcode" id="inputZip" required>
         </div>
       </div>
       <div class="row g-3">
@@ -130,7 +130,7 @@
             </div>
             <div class="col-3">
               <label class="form-check-label">Age</label>
-              <input class="form-control" type="text" name="age" id="inputAge" readonly>
+              <input class="form-control" type="text" name="age" id="inputAge" readonly required>
             </div>
           </div>
           <div class="row g-3">
@@ -165,7 +165,7 @@
               <label class="form-label" for="weightLbs">lbs</label>
             </div>
             <div class="col-2">
-              <input class="form-control" type="text" name="weight" id="weightKgs" placeholder="kgs"onchange="convertWeight(this.value,'kgs')">
+              <input class="form-control" type="text" name="weight" id="weightKgs" placeholder="kgs"onchange="convertWeight(this.value,'kgs')" required>
               <label class="form-label" for="weightKgs">kgs</label>
             </div>
           </div>
@@ -173,17 +173,17 @@
       </div>
       <div class="row g-3">
         <label class="form-check-label" for="profilePic">Profile Photo</label>
-        <input type="file" class="form-control" id="profilePic">
+        <input type="file" class="form-control" id="profilePic" required>
         <p>A photo is required to create a badge id. Please make sure photo is croped showing only an above the shoulder picture.</p>
       </div>
       <div class="row g-3">
         <div class="col-md-6">
           <label for="inputSchool" class="form-check-label">Taekwondo School Or Club</label>
-          <input type="text" class="form-control" id="inputSchool">
+          <input type="text" class="form-control" id="inputSchool" required>
         </div>
         <div class="col-md-6">
           <label for="inputCoach" class="form-check-label">Taekwondo Instructor / Coach</label>
-          <input type="text" class="form-control" id="inputCoach">
+          <input type="text" class="form-control" id="inputCoach" required>
         </div>
       </div>
       <div class="row g-3">
@@ -254,7 +254,7 @@
       <div class="row g-3">
         <div class="col-md-8">
           <label class="form-check-label" for="demonstration">Your Total</label>
-          <input class="form-control" type="text" value="$0" id="total" aria-label="Total" readonly>
+          <input class="form-control" type="text" id="total" aria-label="Total" readonly required>
         </div>
       </div>
       <button type="submit" class="btn btn-primary" disabled>Register</button>
