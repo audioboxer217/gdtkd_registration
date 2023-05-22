@@ -22,38 +22,38 @@
       <label for="inputName" class="form-check-label">Competitor Name</label>
       <div class="row g-3">
         <div class="col">
-          <input type="text" class="form-control" placeholder="First name" aria-label="First name" required>
+          <input type="text" class="form-control" name="fname" placeholder="First name" aria-label="First name" required>
         </div>
         <div class="col">
-          <input type="text" class="form-control" placeholder="Last name" aria-label="Last name" required>
+          <input type="text" class="form-control" name="lname" placeholder="Last name" aria-label="Last name" required>
         </div>
       </div>
       <div class="row g-3">
         <div class="col">
           <label for="inputEmail" class="form-check-label">Email</label>
-          <input type="email" class="form-control" id="inputEmail" required>
+          <input type="email" class="form-control" name="email" id="inputEmail" required>
         </div>
         <div class="col">
           <label for="inputPhone" class="form-check-label">Phone</label>
-          <input type="phone" class="form-control" id="inputPhone" required>
+          <input type="phone" class="form-control" name="phone" id="inputPhone" required>
         </div>
       </div>
       <div class="row g-3">
         <div class="col-12">
           <label for="inputAddress" class="form-check-label">Address</label>
-          <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St" required>
+          <input type="text" class="form-control" name="address1" id="inputAddress" placeholder="1234 Main St" required>
         </div>
         <div class="col-12">
           <label for="inputAddress2" class="form-check-label">Address 2</label>
-          <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
+          <input type="text" class="form-control" name="address2" id="inputAddress2" placeholder="Apartment, studio, or floor">
         </div>
         <div class="col-md-6">
           <label for="inputCity" class="form-check-label">City</label>
-          <input type="text" class="form-control zip-lookup-field-city-title-case" id="inputCity" required>
+          <input type="text" class="form-control zip-lookup-field-city-title-case" name="city" id="inputCity" required>
         </div>
         <div class="col-md-4">
           <label for="inputState" class="form-check-label">State</label>
-          <select id="inputState" class="form-select zip-lookup-field-state" required>
+          <select id="inputState" class="form-select zip-lookup-field-state" name="state" required>
             <option selected>Choose...</option>
             <option value="AK">Alaska</option>
             <option value="AL">Alabama</option>
@@ -111,7 +111,7 @@
         </div>
         <div class="col-md-2">
           <label for="inputZip" class="form-check-label">Zip</label>
-          <input type="text" class="form-control zip-lookup-field-zipcode" id="inputZip" required>
+          <input type="text" class="form-control zip-lookup-field-zipcode" name="zip" id="inputZip" required>
         </div>
       </div>
       <div class="row g-3">
@@ -120,7 +120,7 @@
             <div class="col-8">
               <label class="form-check-label" for="date">Birthday</label>
               <div class="input-group date" id="datepicker">
-                <input class="form-control" type="text" id="birthdate" placeholder="MM/DD/YYYY" onchange="calculateAge(this.value)">
+                <input class="form-control" type="text" name="birthdate" id="birthdate" placeholder="MM/DD/YYYY" onchange="calculateAge(this.value)">
                 <span class="input-group-append">
                   <span class="input-group-text bg-light d-block">
                     <i class="fa fa-calendar"></i>
@@ -173,17 +173,17 @@
       </div>
       <div class="row g-3">
         <label class="form-check-label" for="profilePic">Profile Photo</label>
-        <input type="file" class="form-control" id="profilePic" required>
+        <input type="file" class="form-control" name="profilePic" id="profilePic" required>
         <p>A photo is required to create a badge id. Please make sure photo is croped showing only an above the shoulder picture.</p>
       </div>
       <div class="row g-3">
         <div class="col-md-6">
           <label for="inputSchool" class="form-check-label">Taekwondo School Or Club</label>
-          <input type="text" class="form-control" id="inputSchool" required>
+          <input type="text" class="form-control" name="school" id="inputSchool" required>
         </div>
         <div class="col-md-6">
           <label for="inputCoach" class="form-check-label">Taekwondo Instructor / Coach</label>
-          <input type="text" class="form-control" id="inputCoach" required>
+          <input type="text" class="form-control" name="coach" id="inputCoach" required>
         </div>
       </div>
       <div class="row g-3">
