@@ -9,6 +9,15 @@ function updateCostDetails() {
   }
   updateTotal()
 }
+function updateEventList() {
+  var eventList = []
+  var checked_items = document.querySelectorAll('input[name="events"]:checked')
+  for (i = 0; i < checked_items.length; i++) {
+    eventList.push(checked_items[i].id)
+  }
+  document.getElementById("eventList").value = eventList.join()
+  updateTotal()
+}
 function updateTotal() {
   if (
     document.querySelectorAll('input[name="beltRank"]:checked').length > 0 &&
@@ -76,3 +85,14 @@ function calculateAge(dateString) {
 $(function () {
   $('#datepicker').datepicker();
 });
+function register() {
+  var formData = new FormData(document.forms.eventRegistration);
+  console.log("Form Data:")
+  result_txt = []
+  for (var pair of formData.entries()) {
+    console.log(pair[0] + ' : ' + pair[1]);
+    result_txt.push(pair[0] + ' : ' + pair[1])
+  }
+  document.getElementById("result").innerHTML = result_txt.join();
+  return true;
+}

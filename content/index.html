@@ -232,21 +232,21 @@
         <label for="belt">Events</label>
         <div class="col-md-2">
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="events" id="sparring" onclick="updateTotal()">
+            <input class="form-check-input" type="checkbox" name="events" id="sparring" onclick="updateEventList()">
             <label class="form-check-label" for="sparring">Sparring</label>
           </div>
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="events" id="poomsae" onclick="updateTotal()">
+            <input class="form-check-input" type="checkbox" name="events" id="poomsae" onclick="updateEventList()">
             <label class="form-check-label" for="poomsae">Poomsae</label>
           </div>
         </div>
         <div class="col-md-2">
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="events" id="team poomsae"onclick="updateTotal()">
+            <input class="form-check-input" type="checkbox" name="events" id="team poomsae"onclick="updateEventList()">
             <label class="form-check-label" for="team poomsae">Team Poomsae</label>
           </div>
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="events" id="demonstration"onclick="updateTotal()">
+            <input class="form-check-input" type="checkbox" name="events" id="demonstration"onclick="updateEventList()">
             <label class="form-check-label" for="demonstration">Demonstration</label>
           </div>
         </div>
@@ -257,6 +257,7 @@
           <input class="form-control" type="text" id="total" aria-label="Total" readonly required>
         </div>
       </div>
+      <input class="form-control" type="text" name="eventList" id="eventList" hidden required>
       <button type="submit" class="btn btn-primary" disabled>Register</button>
     </form>
   </div>
