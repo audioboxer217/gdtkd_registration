@@ -73,3 +73,6 @@ function calculateAge(dateString) {
   }
   document.getElementById("ageClass").innerHTML = "Age Group is <b>" + ageClass + "</b>"
 }
+$(function () {
+  $('#datepicker').datepicker();
+});
