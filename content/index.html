@@ -35,7 +35,7 @@
         </div>
         <div class="col">
           <label for="inputPhone" class="form-check-label">Phone</label>
-          <input type="phone" class="form-control" name="phone" id="inputPhone" required>
+          <input type="phone" class="form-control" name="phone" id="inputPhone" pattern="^\d{3}-\d{3}-\d{4}$" oninvalid="setCustomValidity('Please enter a valid phone number.')" oninput="setCustomValidity('')" onchange="formatPhoneNumber(this.value)" required>
         </div>
       </div>
       <div class="row g-3">
@@ -258,7 +258,7 @@
         </div>
       </div>
       <input class="form-control" type="text" name="eventList" id="eventList" hidden required>
-      <button type="submit" class="btn btn-primary" disabled>Register</button>
+      <button type="submit" class="btn btn-primary">Register</button>
     </form>
   </div>
 </body>
