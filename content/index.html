@@ -115,9 +115,9 @@
         </div>
       </div>
       <div class="row g-3">
-        <div class="col-3">
+        <div class="col-md-6">
           <div class="row g-3">
-            <div class="col-8">
+            <div class="col-md-8">
               <label class="form-check-label" for="date">Birthday</label>
               <div class="input-group date" id="datepicker">
                 <input class="form-control" type="text" name="birthdate" id="birthdate" placeholder="MM/DD/YYYY" onchange="calculateAge(this.value)">
@@ -128,7 +128,7 @@
                 </span>
               </div>
             </div>
-            <div class="col-3">
+            <div class="col-md-2">
               <label class="form-check-label">Age</label>
               <input class="form-control" type="text" name="age" id="inputAge" readonly required>
             </div>
@@ -137,8 +137,7 @@
             <p id="ageClass"></p>
           </div>
         </div>
-        <div class="col-1"></div>
-        <div class="col-2">
+        <div class="col-md-2">
           <label class="form-check-label">Gender</label>
           <div class="row g-3">
             <div class="col">
@@ -157,14 +156,14 @@
             </div>
           </div>
         </div>
-        <div class="col-6">
+        <div class="col-md-4">
           <label class="form-check-label">Weight</label>
           <div class="row g-3">
-            <div class="col-2">
+            <div class="col-md-4">
               <input class="form-control" type="text" id="weightLbs" placeholder="lbs" onchange="convertWeight(this.value,'lbs')">
               <label class="form-label" for="weightLbs">lbs</label>
             </div>
-            <div class="col-2">
+            <div class="col-md-4">
               <input class="form-control" type="text" name="weight" id="weightKgs" placeholder="kgs"onchange="convertWeight(this.value,'kgs')" required>
               <label class="form-label" for="weightKgs">kgs</label>
             </div>
