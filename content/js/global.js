@@ -68,7 +68,9 @@ function convertWeight(amount, unit) {
 }
 function calculateAge(dateString) {
   var today = new Date()
-  var age = today.getFullYear() - dateString.split('/')[2]
+  var birthdate = new Date(dateString)
+  console.log(birthdate)
+  var age = today.getFullYear() - birthdate.getFullYear()//dateString.split('/')[2]
   document.getElementById("inputAge").value = age
   if (age <= 5) {
     var ageClass = "Titan"
@@ -94,6 +96,13 @@ function calculateAge(dateString) {
   else if (age > 32) {
     var ageClass = "Ultra"
   }
+  formattedBirthdate = birthdate.toLocaleDateString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    year: "numeric"
+  });
+  $('#datepicker').datepicker('update', formattedBirthdate);
+  document.getElementById("birthdate").value = formattedBirthdate
   document.getElementById("ageClass").innerHTML = "Age Group is <b>" + ageClass + "</b>"
 }
 $(function () {
