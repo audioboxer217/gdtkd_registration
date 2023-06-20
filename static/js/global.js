@@ -108,17 +108,7 @@ function calculateAge(dateString) {
 $(function () {
   $('#datepicker').datepicker();
 });
-function register() {
-  var formData = new FormData(document.forms.eventRegistration);
-  console.log("Form Data:")
-  result_txt = []
-  for (var pair of formData.entries()) {
-    console.log(pair[0] + ' : ' + pair[1]);
-    result_txt.push(pair[0] + ' : ' + pair[1])
-  }
-  document.getElementById("result").innerHTML = result_txt.join();
-  return true;
-}
+
 function initMap() {
   const CONFIGURATION = {
     "ctaTitle": "Checkout",
