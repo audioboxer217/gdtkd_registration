@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+import json
 
 app = Flask(__name__)
 
@@ -28,7 +29,10 @@ def handle_form():
         )
 
         # Return a response or redirect to another page
-        return render_template("success.html", form_data=form_data)
+        with open(f"/data/{form_data['fname']}_{form_data['lname']}.json", "w") as f:
+            json.dump(form_data, f)
+
+        return render_template("success.html", form_data=form_data, indent=4)
     else:
         # Display the form
         return render_template("form.html")
