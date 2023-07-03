@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request
 import json
+import os
 
 app = Flask(__name__)
+app.config["UPLOAD_FOLDER"] = "/data"
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -21,16 +23,19 @@ def handle_form():
             age=request.form.get("age"),
             gender=request.form.get("gender"),
             weight=request.form.get("weight"),
-            profilePic=request.form.get("profilePic"),
             school=request.form.get("school"),
             coach=request.form.get("coach"),
             beltRank=request.form.get("beltRank"),
             events=request.form.get("eventList"),
         )
-
-        # Return a response or redirect to another page
-        with open(f"/data/{form_data['fname']}_{form_data['lname']}.json", "w") as f:
+        formFilename = f"{form_data['fname']}_{form_data['lname']}.json"
+        with open(os.path.join(app.config["UPLOAD_FOLDER"], formFilename), "w") as f:
             json.dump(form_data, f)
+
+        profileImg = request.files["profilePic"]
+        imageExt = os.path.splitext(profileImg.filename)[1]
+        imgFilename = f"{form_data['fname']}_{form_data['lname']}{imageExt}"
+        profileImg.save(os.path.join(app.config["UPLOAD_FOLDER"], imgFilename))
 
         return render_template("success.html", form_data=form_data, indent=4)
     else:
