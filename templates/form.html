@@ -19,7 +19,7 @@
 <body>
   <div class="container">
     <h1>Registration Form</h1>
-    <form action="/" method="post" id="eventRegistration">
+    <form action="/" method="post" enctype=multipart/form-data id="eventRegistration">
       <label for="inputName" class="form-check-label">Competitor Name</label>
       <div class="row g-3">
         <div class="col">
@@ -172,9 +172,14 @@
         </div>
       </div>
       <div class="row g-3">
-        <label class="form-check-label" for="profilePic">Profile Photo</label>
-        <input type="file" class="form-control" name="profilePic" id="profilePic" required>
-        <p>A photo is required to create a badge id. Please make sure photo is croped showing only an above the shoulder picture.</p>
+        <div class="col-md-6">
+          <label class="form-check-label" for="profilePic">Profile Photo</label>
+          <input type="file" class="form-control" name="profilePic" id="profilePic" accept="image/*" onchange="upload_img(this.files)" required>
+          <p>A photo is required to create a badge id. Please make sure photo is croped showing only an above the shoulder picture.</p>
+        </div>
+        <div class="col-md-6">
+          <img id="profileImg">
+        </div>
       </div>
       <div class="row g-3">
         <div class="col-md-6">

@@ -1,3 +1,51 @@
+function upload_img(files) {
+  if (files[0]) {
+
+    var MAX_WIDTH = 300;
+    var MAX_HEIGHT = 300;
+
+    let imageFile = files[0];
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var img = document.createElement("img");
+
+      img.onload = function (event) {
+        var width = img.width;
+        var height = img.height;
+        // Change the resizing logic
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height = height * (MAX_WIDTH / width);
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width = width * (MAX_HEIGHT / height);
+            height = MAX_HEIGHT;
+          }
+        }
+        // Dynamically create a canvas element
+        var canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+
+        // var canvas = document.getElementById("canvas");
+        var ctx = canvas.getContext("2d");
+
+        // Actual resizing
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Show resized image in preview element
+        var dataurl = canvas.toDataURL(imageFile.type);
+        document.getElementById("profileImg").src = dataurl;
+        document.getElementById("profileImg").value = dataurl;
+      }
+      img.src = e.target.result;
+    }
+    reader.readAsDataURL(imageFile);
+  }
+}
+
 function formatPhoneNumber(input) {
   // Remove any non-digits from the input
   var phoneNum = input.replace(/[^0-9]/g, "");
