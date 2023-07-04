@@ -12,4 +12,6 @@ EXPOSE 5000
 
 VOLUME [ "/data" ]
 
+ENV MAPS_API_KEY='SetViaEnvFile'
+
 CMD ["python", "app.py"]

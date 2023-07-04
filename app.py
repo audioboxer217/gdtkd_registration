@@ -40,7 +40,9 @@ def handle_form():
         return render_template("success.html", form_data=form_data, indent=4)
     else:
         # Display the form
-        return render_template("form.html")
+        return render_template(
+            "form.html", mapsApiKey=os.getenv("MAPS_API_KEY").strip("'")
+        )
 
 
 if __name__ == "__main__":
