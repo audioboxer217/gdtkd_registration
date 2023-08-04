@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.8'
 
 services:
 
@@ -11,12 +11,19 @@ services:
     volumes:
       - db:/var/lib/mysql
     env_file: backend.env
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      timeout: 5s
+      retries: 12
 
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
+    depends_on:
+      db:
+        condition: service_healthy
 
   registration:
     image: gdtkd_reg
@@ -27,6 +34,18 @@ services:
     volumes:
       - data:/data
     env_file: frontend.env
+
+  processor:
+    image: gdtkd_processor
+    build: ./backend/Dockerfile
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - data:/data
+    env_file:
+      - backend.env
 
 volumes:
   data:
