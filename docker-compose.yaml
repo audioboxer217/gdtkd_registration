@@ -27,7 +27,8 @@ services:
 
   registration:
     image: gdtkd_reg
-    build: ./frontend/Dockerfile
+    build:
+      context: ./frontend
     restart: always
     ports:
       - 80:5000
@@ -37,7 +38,8 @@ services:
 
   processor:
     image: gdtkd_processor
-    build: ./backend/Dockerfile
+    build:
+      context: ./backend
     restart: always
     depends_on:
       db:
