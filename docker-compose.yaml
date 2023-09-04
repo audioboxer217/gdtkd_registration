@@ -49,6 +49,20 @@ services:
     env_file:
       - backend.env
 
+  # debug:
+  #   image: gdtkd_processor
+  #   entrypoint: ["tail", "-f", "/dev/null"]
+  #   build:
+  #     context: ./backend
+  #   restart: always
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   volumes:
+  #     - data:/data
+  #   env_file:
+  #     - backend.env
+
 volumes:
   data:
   db:
