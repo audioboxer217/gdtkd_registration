@@ -27,3 +27,8 @@ import {
   to = module.registration_infra.aws_dynamodb_table.registrations_table
   id = "okgp_2024_registration"
 }
+
+import {
+  to = module.registration_infra.aws_route53_zone.main
+  id = "Z09376522CF3PU6SHG99X"
+}
