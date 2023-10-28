@@ -49,3 +49,52 @@ resource "aws_acm_certificate_validation" "main" {
   certificate_arn         = aws_acm_certificate.main.arn
   validation_record_fqdns = [for record in aws_route53_record.validation : record.fqdn]
 }
+
+resource "aws_s3_object" "backend_json" {
+  bucket = module.registration_infra.config_bucket_name
+  key    = "backend.json"
+  content = jsonencode(tomap({
+    EMAIL_PASSWD       = var.email_send_password
+    FROM_EMAIL         = var.email_send_address
+    STRIPE_API_KEY     = var.stripe_api_key
+    COMPETITION_NAME   = var.competition_name
+    COMPETITION_YEAR   = var.competition_year
+    CONTACT_EMAIL      = var.contact_email
+    PROFILE_PIC_BUCKET = module.registration_infra.profile_pics_bucket_name
+    BADGE_BUCKET       = module.registration_infra.badges_bucket_name
+    CONFIG_BUCKET      = module.registration_infra.config_bucket_name
+    SQS_QUEUE_URL      = module.registration_infra.processing_queue_url
+    DB_TABLE           = var.registration_table_name
+  }))
+  content_type           = "application/json"
+  server_side_encryption = "AES256"
+  storage_class          = "STANDARD"
+}
+
+resource "aws_s3_object" "frontend_json" {
+  bucket = module.registration_infra.config_bucket_name
+  key    = "frontend.json"
+  content = jsonencode(tomap({
+    MAPS_API_KEY       = var.maps_api_key
+    STRIPE_API_KEY     = var.stripe_api_key
+    REG_URL            = "https://${var.domain_name}"
+    COMPETITION_NAME   = var.competition_name
+    COMPETITION_YEAR   = var.competition_year
+    CONTACT_EMAIL      = var.contact_email
+    PROFILE_PIC_BUCKET = module.registration_infra.profile_pics_bucket_name
+    CONFIG_BUCKET      = module.registration_infra.config_bucket_name
+    SQS_QUEUE_URL      = module.registration_infra.processing_queue_url
+  }))
+  content_type           = "application/json"
+  server_side_encryption = "AES256"
+  storage_class          = "STANDARD"
+}
+
+resource "aws_s3_object" "stripe_prices_json" {
+  bucket                 = module.registration_infra.config_bucket_name
+  key                    = "stripe_prices.json"
+  content                = jsonencode(var.stripe_prices)
+  content_type           = "application/json"
+  server_side_encryption = "AES256"
+  storage_class          = "STANDARD"
+}
