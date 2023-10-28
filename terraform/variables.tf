@@ -1,3 +1,54 @@
+# Competition Details
+variable "domain_name" {
+  type        = string
+  description = "The domain to use for this site."
+}
+
+variable "email_send_address" {
+  type        = string
+  description = "The email address to use to send emails from."
+}
+
+variable "email_send_password" {
+  type        = string
+  sensitive   = true
+  description = "The password for the 'email_send_address'."
+}
+
+variable "competition_name" {
+  type        = string
+  description = "The name of the competition."
+}
+
+variable "competition_year" {
+  type        = string
+  description = "The year of the competition."
+}
+
+variable "contact_email" {
+  type        = string
+  description = "The email to give to users as a contact."
+}
+
+# API Details
+variable "maps_api_key" {
+  type        = string
+  sensitive   = true
+  description = "The API Key for Google Maps."
+}
+
+variable "stripe_api_key" {
+  type        = string
+  sensitive   = true
+  description = "The API Key for Stripe."
+}
+
+variable "stripe_prices" {
+  type        = map(string)
+  description = "The mapping of Price objects in Stripe."
+}
+
+# AWS Resource Inputs
 variable "processing_queue_name" {
   type        = string
   description = "The name to use for the 'processing' SQS Queue."
@@ -49,9 +100,4 @@ variable "config_bucket_prefix" {
   type        = string
   description = "The prefix to use for bucket that will hold the Configs."
   default     = "tkd-reg-config"
-}
-
-variable "domain_name" {
-  type        = string
-  description = "The domain to use for this site."
 }
