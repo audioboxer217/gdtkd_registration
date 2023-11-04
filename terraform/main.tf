@@ -1,6 +1,6 @@
 module "registration_infra" {
   source  = "app.terraform.io/OKTKD/tkd-registration/kseppler"
-  version = "~>0.0.2"
+  version = "~>0.0.3"
 
   processing_queue_name           = var.processing_queue_name
   failed_registrations_queue_name = var.failed_registrations_queue_name
