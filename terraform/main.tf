@@ -84,6 +84,7 @@ resource "aws_s3_object" "frontend_json" {
     PROFILE_PIC_BUCKET = module.registration_infra.profile_pics_bucket_name
     CONFIG_BUCKET      = module.registration_infra.config_bucket_name
     SQS_QUEUE_URL      = module.registration_infra.processing_queue_url
+    DB_TABLE           = var.registration_table_name
   }))
   content_type           = "application/json"
   server_side_encryption = "AES256"
