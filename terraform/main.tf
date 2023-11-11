@@ -77,16 +77,17 @@ resource "aws_s3_object" "frontend_json" {
   bucket = module.registration_infra.config_bucket_name
   key    = "frontend.json"
   content = jsonencode(tomap({
-    MAPS_API_KEY       = var.maps_api_key
-    STRIPE_API_KEY     = var.stripe_api_key
-    REG_URL            = "https://${var.domain_name}"
-    COMPETITION_NAME   = var.competition_name
-    COMPETITION_YEAR   = var.competition_year
-    CONTACT_EMAIL      = var.contact_email
-    PROFILE_PIC_BUCKET = module.registration_infra.profile_pics_bucket_name
-    CONFIG_BUCKET      = module.registration_infra.config_bucket_name
-    SQS_QUEUE_URL      = module.registration_infra.processing_queue_url
-    DB_TABLE           = var.registration_table_name
+    MAPS_API_KEY        = var.maps_api_key
+    STRIPE_API_KEY      = var.stripe_api_key
+    REG_URL             = "https://${var.domain_name}"
+    COMPETITION_NAME    = var.competition_name
+    COMPETITION_YEAR    = var.competition_year
+    CONTACT_EMAIL       = var.contact_email
+    PROFILE_PIC_BUCKET  = module.registration_infra.profile_pics_bucket_name
+    CONFIG_BUCKET       = module.registration_infra.config_bucket_name
+    PUBLIC_MEDIA_BUCKET = module.registration_infra.public_media_bucket_name
+    SQS_QUEUE_URL       = module.registration_infra.processing_queue_url
+    DB_TABLE            = var.registration_table_name
   }))
   content_type           = "application/json"
   server_side_encryption = "AES256"
