@@ -84,6 +84,12 @@ variable "config_bucket_name" {
   default     = ""
 }
 
+variable "public_media_bucket_name" {
+  type        = string
+  description = "The name to use for bucket that will hold the public media (Overrides `public_media_bucket_prefix` if provided)."
+  default     = ""
+}
+
 variable "profile_pics_bucket_prefix" {
   type        = string
   description = "The prefix to use for bucket that will hold the Profile Pics."
@@ -100,4 +106,10 @@ variable "config_bucket_prefix" {
   type        = string
   description = "The prefix to use for bucket that will hold the Configs."
   default     = "tkd-reg-config"
+}
+
+variable "public_media_bucket_prefix" {
+  type        = string
+  description = "The prefix to use for bucket that will hold the public media."
+  default     = "tkd-reg-public-media"
 }
