@@ -4,6 +4,16 @@ variable "domain_name" {
   description = "The domain to use for this site."
 }
 
+variable "email_send_server" {
+  type        = string
+  description = "The email server to send emails from."
+}
+
+variable "email_send_port" {
+  type        = string
+  description = "The port for the email server to send emails from."
+}
+
 variable "email_send_address" {
   type        = string
   description = "The email address to use to send emails from."

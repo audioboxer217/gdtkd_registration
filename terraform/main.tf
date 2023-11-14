@@ -56,6 +56,8 @@ resource "aws_s3_object" "backend_json" {
   bucket = module.registration_infra.config_bucket_name
   key    = "backend.json"
   content = jsonencode(tomap({
+    EMAIL_SERVER       = var.email_send_server
+    EMAIL_PORT         = var.email_send_port
     EMAIL_PASSWD       = var.email_send_password
     FROM_EMAIL         = var.email_send_address
     STRIPE_API_KEY     = var.stripe_api_key
