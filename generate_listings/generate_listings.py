@@ -78,7 +78,7 @@ def upload_to_s3(entries):
 
 
 def main():
-    if os.getenv("Environment") == "prod":
+    if os.getenv("ENVIRONMENT") == "prod":
         entries = get_current_entries()
     else:
         entries = [

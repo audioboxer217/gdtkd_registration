@@ -16,7 +16,7 @@
         ],
         "remote_env": "s3://okgp24-reg-config/backend.json",
         "environment_variables": {
-            "environment": "prod"
+            "ENVIRONMENT": "prod"
         },
         "parameter_depth": 1,
         "memory_size": 512,
@@ -39,7 +39,7 @@
         ],
         "remote_env": "s3://gdtkd-reg-config/backend.json",
         "environment_variables": {
-            "environment": "dev"
+            "ENVIRONMENT": "dev"
         },
         "parameter_depth": 1,
         "memory_size": 512,
