@@ -24,6 +24,16 @@
       ],
       "jinja": true,
       "justMyCode": true
-    }
+    },
+    {
+      "name":"Python: Current File",
+      "type":"python",
+      "request":"launch",
+      "program":"${file}",
+      "python": "${workspaceFolder}/generate_listings/.venv/bin/python",
+      "envFile": "${workspaceFolder}/frontend.env",
+      "console":"integratedTerminal",
+      "justMyCode":true
+    },
   ]
 }
