@@ -1,0 +1,48 @@
+{
+    "prod": {
+        "app_function": "generate_listings.main",
+        "apigateway_enabled": false,
+        "aws_region": "us-east-2",
+        "profile_name": "personal",
+        "project_name": "listings",
+        "runtime": "python3.8",
+        "s3_bucket": "zappa-okgp24-listings-prod",
+        "keep_warm": false,
+        "events": [
+            {
+                "function": "process_entries.main",
+                "expression": "rate(1 day)"
+            }
+        ],
+        "remote_env": "s3://okgp24-reg-config/backend.json",
+        "environment_variables": {
+            "environment": "prod"
+        },
+        "parameter_depth": 1,
+        "memory_size": 512,
+        "use_precompiled_packages": true
+    },
+    "dev": {
+        "app_function": "generate_listings.main",
+        "apigateway_enabled": false,
+        "aws_region": "us-east-2",
+        "profile_name": "personal",
+        "project_name": "listings",
+        "runtime": "python3.8",
+        "s3_bucket": "zappa-gdtkd-listings-dev",
+        "keep_warm": false,
+        "events": [
+            {
+                "function": "generate_listings.main",
+                "expression": "rate(1 day)"
+            }
+        ],
+        "remote_env": "s3://gdtkd-reg-config/backend.json",
+        "environment_variables": {
+            "environment": "dev"
+        },
+        "parameter_depth": 1,
+        "memory_size": 512,
+        "use_precompiled_packages": true
+    }
+}
