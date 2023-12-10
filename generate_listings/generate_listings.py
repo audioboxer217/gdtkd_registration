@@ -4,7 +4,7 @@ import boto3
 
 
 table_name = os.getenv("DB_TABLE")
-mediaBucket = os.getenv("PUBLIC_MEDIA_BUCKET")
+mediaBucket = os.getenv("CONFIG_BUCKET")
 
 
 def get_current_entries():
