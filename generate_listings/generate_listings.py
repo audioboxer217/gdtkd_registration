@@ -98,7 +98,7 @@ def main():
                 "age": "11",
                 "weight": "31.10",
                 "school": "GDTKD",
-                "events": "poomsae",
+                "events": "poomsae,breaking,pair poomsae",
             },
             {
                 "name": "Jensen Eppler",
@@ -107,7 +107,7 @@ def main():
                 "age": "11",
                 "weight": "37.19",
                 "school": "GDTKD",
-                "events": "sparring",
+                "events": "sparring,pair poomsae",
             },
             {
                 "name": "Jackson Dillingham",
@@ -125,7 +125,7 @@ def main():
                 "age": "14",
                 "weight": "47.19",
                 "school": "GDTKD",
-                "events": "sparring",
+                "events": "sparring,breaking",
             },
             {
                 "name": "Lane Grossman",
@@ -134,7 +134,7 @@ def main():
                 "age": "13",
                 "weight": "46.50",
                 "school": "GDTKD",
-                "events": "poomsae",
+                "events": "poomsae,breaking,team poomsae",
             },
         ]
 
