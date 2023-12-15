@@ -37,11 +37,13 @@ def get_current_entries():
 
 def set_weight_class(entries):
     age_groups = {
-        "10": "youth",
-        "11": "youth",
-        "12": "cadet",
-        "13": "cadet",
-        "14": "cadet",
+        "dragon": [6, 7],
+        "tiger": [8, 9],
+        "youth": [10, 11],
+        "cadet": [12, 13, 14],
+        "junior": [15, 16],
+        "senior": list(range(17, 33)),
+        "ultra": list(range(33, 100)),
     }
     weight_classes = {
         "youth": {
