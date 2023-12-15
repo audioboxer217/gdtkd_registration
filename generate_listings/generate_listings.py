@@ -4,7 +4,7 @@ import boto3
 
 
 table_name = os.getenv("DB_TABLE")
-mediaBucket = os.getenv("CONFIG_BUCKET")
+bucket_name = os.getenv("CONFIG_BUCKET")
 
 
 def get_current_entries():
@@ -69,9 +69,9 @@ def set_weight_class(entries):
 
 def upload_to_s3(entries):
     s3 = boto3.client("s3")
-    print(f"Uploading entries.json to {mediaBucket}")
+    print(f"Uploading entries.json to {bucket_name}")
     s3.put_object(
-        Bucket=mediaBucket,
+        Bucket=bucket_name,
         Key="entries.json",
         Body=entries,
     )
