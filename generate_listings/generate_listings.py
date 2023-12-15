@@ -57,13 +57,16 @@ def set_weight_class(entries):
     }
     updated_entries = []
     for entry in entries:
-        age_group = age_groups[entry["age"]]
+        age_group = next(
+            (group for group, ages in age_groups.items() if int(entry["age"]) in ages)
+        )
         weight_class_ranges = weight_classes[age_group][entry["gender"]]
-        for k, v in weight_class_ranges.items():
-            if float(entry["weight"]) >= float(v[0]) and float(entry["weight"]) < float(
-                v[1]
-            ):
-                entry["weight_class"] = k
+        entry["weight_class"] = next(
+            weight_class
+            for weight_class, weights in weight_class_ranges.items()
+            if float(entry["weight"]) >= float(weights[0])
+            and float(entry["weight"]) < float(weights[1])
+        )
         updated_entries.append(entry)
 
     return updated_entries
