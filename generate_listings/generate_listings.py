@@ -35,7 +35,7 @@ def get_current_entries():
     return result
 
 
-def set_weight_class(entries):
+def get_age_group(entry):
     age_groups = {
         "dragon": [6, 7],
         "tiger": [8, 9],
@@ -45,6 +45,29 @@ def set_weight_class(entries):
         "senior": list(range(17, 33)),
         "ultra": list(range(33, 100)),
     }
+
+    age_group = next(
+        (group for group, ages in age_groups.items() if int(entry["age"]) in ages)
+    )
+
+    return age_group
+
+
+def get_belt_group(entry):
+    belt_groups = {
+        "low": ["white", "yellow", "orange"],
+        "middle": ["green", "blue"],
+        "high": ["red", "brown"],
+        "black": ["black"],
+    }
+    belt_group = next(
+        (group for group, belts in belt_groups.items() if entry["belt"] in belts)
+    )
+
+    return belt_group
+
+
+def set_weight_class(entries):
     weight_classes = {
         "youth": {
             "male": {"fly": (0, 29.99), "fin": (30, 34.99), "light": (35, 39.99)},
@@ -57,9 +80,7 @@ def set_weight_class(entries):
     }
     updated_entries = []
     for entry in entries:
-        age_group = next(
-            (group for group, ages in age_groups.items() if int(entry["age"]) in ages)
-        )
+        age_group = get_age_group(entry)
         weight_class_ranges = weight_classes[age_group][entry["gender"]]
         entry["weight_class"] = next(
             weight_class
@@ -72,83 +93,81 @@ def set_weight_class(entries):
     return updated_entries
 
 
-def upload_to_s3(entries):
+def group_divisions(entries):
+    divisions = {}
+    sparring_entries = list(
+        filter(lambda x: "sparring" in x["events"].split(","), entries)
+    )
+
+    for entry in sparring_entries:
+        age_group = get_age_group(entry)
+        belt_group = get_belt_group(entry)
+        key = f"{belt_group}_{age_group}_{entry['gender'][0]}_{entry['weight_class']}"
+        if key not in divisions:
+            divisions[key] = []
+        divisions[key].append(entry)
+
+    return divisions
+
+
+def generate_division_bracket(entries):
+    pairings = []
+    while len(entries) >= 2:
+        participant1 = entries.pop(0)
+        participant2 = entries.pop(0)
+        if participant1["school"] == participant2["school"]:
+            filtered_entries = [
+                p for p in entries if p["school"] != participant1["school"]
+            ]
+            if len(filtered_entries) > 0:
+                participant2 = filtered_entries.pop(0)
+        pairings.append((participant1, participant2))
+
+    if len(entries) == 1:
+        winner_placeholder = dict(
+            name="W1",
+            gender=participant1["gender"],
+            belt=participant1["belt"],
+            age="TBD",
+            weight="TBD",
+            school="TBD",
+        )
+        pairings.append((entries[0], winner_placeholder))
+    return pairings
+
+
+def upload_to_s3(entries, filename):
     s3 = boto3.client("s3")
-    print(f"Uploading entries.json to {bucket_name}")
+    print(f"Uploading {filename} to {bucket_name}")
     s3.put_object(
         Bucket=bucket_name,
-        Key="entries.json",
+        Key=filename,
         Body=entries,
     )
 
 
 def main():
-    if os.getenv("ENVIRONMENT") == "prod":
-        entries = get_current_entries()
-    else:
-        entries = [
-            {
-                "name": "Ciin Sing",
-                "gender": "female",
-                "belt": "black",
-                "age": "11",
-                "weight": "35.30",
-                "school": "GDTKD",
-                "events": "sparring,poomsae",
-            },
-            {
-                "name": "Mackenzie Wilson",
-                "gender": "female",
-                "belt": "brown",
-                "age": "11",
-                "weight": "31.10",
-                "school": "GDTKD",
-                "events": "poomsae,breaking,pair poomsae",
-            },
-            {
-                "name": "Jensen Eppler",
-                "gender": "female",
-                "belt": "black",
-                "age": "11",
-                "weight": "37.19",
-                "school": "GDTKD",
-                "events": "sparring,pair poomsae",
-            },
-            {
-                "name": "Jackson Dillingham",
-                "gender": "male",
-                "belt": "black",
-                "age": "13",
-                "weight": "47.10",
-                "school": "GDTKD",
-                "events": "sparring,poomsae",
-            },
-            {
-                "name": "Braden Gile",
-                "gender": "male",
-                "belt": "black",
-                "age": "14",
-                "weight": "47.19",
-                "school": "GDTKD",
-                "events": "sparring,breaking",
-            },
-            {
-                "name": "Lane Grossman",
-                "gender": "male",
-                "belt": "red",
-                "age": "13",
-                "weight": "46.50",
-                "school": "GDTKD",
-                "events": "poomsae,breaking,team poomsae",
-            },
-        ]
-
+    entries = get_current_entries()
     entries = set_weight_class(entries)
-    upload_to_s3(json.dumps(entries, indent=2, default=str))
-    # IDEA: if I need to filter by event
-    # for event in ["sparring", "poomsae"]:
-    #     event_entries = list(filter(lambda x: event in x["events"].split(","), entries))
-    #     upload_to_s3(json.dumps(entries, indent=2, default=str), event)
+    # upload_to_s3(json.dumps(entries, indent=2, default=str), "entries.json")
+
+    divisions = group_divisions(entries)
+    for key, value in divisions.items():
+        age_group = key.split("_")[1]
+        weight_class = key.split("_")[3]
+        print(f"Group {key}:")
+        bracket = generate_division_bracket(value)
+        with open(f"{key}.csv", "w") as out:
+            out.write(
+                f"#Game Gr.,#Class,#Gender,#Weight,#Chung Name,#Chung Belongs To,#Hong Name,#Hong Belongs To"
+            )
+            for i, pairing in enumerate(bracket, start=1):
+                participant1, participant2 = pairing
+                print(f'  Match {i}: {participant1["name"]} vs {participant2["name"]}')
+
+                out.write(
+                    f"\n{i},{age_group},{participant1['gender']},{weight_class},{participant1['name']},{participant1['school']},{participant2['name']},{participant2['school']}"
+                )
 
 
 if __name__ == "__main__":
