@@ -10,8 +10,8 @@
         "keep_warm": false,
         "events": [
             {
-                "function": "process_entries.main",
-                "expression": "rate(1 day)"
+                "function": "generate_listings.main",
+                "expression": "cron(0 6 * * ? *)"
             }
         ],
         "remote_env": "s3://okgp24-reg-config/backend.json",
@@ -34,7 +34,7 @@
         "events": [
             {
                 "function": "generate_listings.main",
-                "expression": "rate(1 day)"
+                "expression": "cron(30 5 * * ? *)"
             }
         ],
         "remote_env": "s3://gdtkd-reg-config/backend.json",
