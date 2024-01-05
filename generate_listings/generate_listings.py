@@ -1,6 +1,7 @@
 import os
-import json
+import csv
 import boto3
+import random
 
 
 table_name = os.getenv("DB_TABLE")
@@ -234,27 +235,32 @@ def group_divisions(entries):
 
 def generate_division_bracket(entries):
     pairings = []
-    while len(entries) >= 2:
-        participant1 = entries.pop(0)
-        participant2 = entries.pop(0)
-        if participant1["school"] == participant2["school"]:
-            filtered_entries = [
-                p for p in entries if p["school"] != participant1["school"]
-            ]
-            if len(filtered_entries) > 0:
-                participant2 = filtered_entries.pop(0)
-        pairings.append((participant1, participant2))
+    full_brackets = len(entries) & (len(entries) - 1)
+    if full_brackets == 0:
+        full_brackets = len(entries)
+        addl_matches = 0
+    else:
+        addl_matches = len(entries) - full_brackets
 
-    if len(entries) == 1:
+    random.shuffle(entries)  # Shuffle entries for random pairings
+    while len(entries) > addl_matches:
+        current_entry = entries.pop()
+
+        for i, entry in enumerate(entries):
+            if entry["school"] != current_entry["school"]:
+                pairings.append((current_entry, entries.pop(i)))
+                break
+
+    for i, entry in enumerate(entries):
         winner_placeholder = dict(
-            name="W1",
-            gender=participant1["gender"],
-            belt=participant1["belt"],
+            name=f"W{i+1}",
+            gender=pairings[0][0]["gender"],
+            belt=pairings[0][0]["belt"],
             age="TBD",
             weight="TBD",
             school="TBD",
         )
-        pairings.append((entries[0], winner_placeholder))
+        pairings.append((entries.pop(i), winner_placeholder))
     return pairings
 
 
@@ -274,22 +280,34 @@ def main():
     # upload_to_s3(json.dumps(entries, indent=2, default=str), "entries.json")
 
     divisions = group_divisions(entries)
+    single_entry_div = []
     for key, value in divisions.items():
         age_group = key.split("_")[1]
         weight_class = key.split("_")[3]
         print(f"Group {key}:")
-        bracket = generate_division_bracket(value)
-        with open(f"{key}.csv", "w") as out:
-            out.write(
-                f"#Game Gr.,#Class,#Gender,#Weight,#Chung Name,#Chung Belongs To,#Hong Name,#Hong Belongs To"
-            )
-            for i, pairing in enumerate(bracket, start=1):
-                participant1, participant2 = pairing
-                print(f'  Match {i}: {participant1["name"]} vs {participant2["name"]}')
-
+        if len(value) == 1:
+            single_entry_div.append(value)
+            print(f"Single competitor {value['name']} added to exhibition list.")
+        else:
+            bracket = generate_division_bracket(value)
+            with open(f"{key}.csv", "w") as out:
                 out.write(
-                    f"\n{i},{age_group},{participant1['gender']},{weight_class},{participant1['name']},{participant1['school']},{participant2['name']},{participant2['school']}"
+                    f"#Game Gr.,#Class,#Gender,#Weight,#Chung Name,#Chung Belongs To,#Hong Name,#Hong Belongs To"
                 )
+                for i, pairing in enumerate(bracket, start=1):
+                    participant1, participant2 = pairing
+                    print(
+                        f'  Match {i}: {participant1["name"]} ({participant1["school"]}) vs {participant2["name"]} ({participant2["school"]})'
+                    )
+
+                    out.write(
+                        f"\n{i},{age_group},{participant1['gender']},{weight_class},{participant1['name']},{participant1['school']},{participant2['name']},{participant2['school']}"
+                    )
+
+    with open("exhibition_entries.csv", "w") as out:
+        writer = csv.writer(out)
+        for entry in single_entry_div:
+            writer.writerow(entry.values())
 
 
 if __name__ == "__main__":
