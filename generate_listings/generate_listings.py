@@ -1,5 +1,4 @@
 import os
-import csv
 import boto3
 import random
 
@@ -286,8 +285,8 @@ def main():
         weight_class = key.split("_")[3]
         print(f"Group {key}:")
         if len(value) == 1:
-            single_entry_div.append(value)
-            print(f"Single competitor {value['name']} added to exhibition list.")
+            single_entry_div.append(value[0])
+            print(f"Single competitor {value[0]['name']} added to exhibition list.")
         else:
             bracket = generate_division_bracket(value)
             with open(f"{key}.csv", "w") as out:
@@ -305,9 +304,11 @@ def main():
                     )
 
     with open("exhibition_entries.csv", "w") as out:
-        writer = csv.writer(out)
+        out.write("name,belt,age,gender,weight,weight_class,school")
         for entry in single_entry_div:
-            writer.writerow(entry.values())
+            out.write(
+                f"\n{entry['name']},{entry['belt']},{entry['age']},{entry['gender']},{entry['weight']},{entry['weight_class']},{participant1['school']}"
+            )
 
 
 if __name__ == "__main__":
