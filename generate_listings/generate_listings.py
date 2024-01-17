@@ -287,13 +287,13 @@ def generate_division_bracket(entries):
     return pairings
 
 
-def upload_to_s3(entries, filename):
+def upload_to_s3(contents, filename):
     s3 = boto3.client("s3")
     print(f"Uploading {filename} to {bucket_name}")
     s3.put_object(
         Bucket=bucket_name,
         Key=filename,
-        Body=entries,
+        Body=contents,
     )
 
 
@@ -316,26 +316,26 @@ def main():
             print(f"Single competitor {value[0]['name']} added to exhibition list.")
         else:
             bracket = generate_division_bracket(value)
-            with open(f"{key}.csv", "w") as out:
-                out.write(
-                    f"#Game Gr.,#Class,#Gender,#Weight,#Chung Name,#Chung Belongs To,#Hong Name,#Hong Belongs To"
+            matches = [
+                "#Game Gr.,#Class,#Gender,#Weight,#Chung Name,#Chung Belongs To,#Hong Name,#Hong Belongs To"
+            ]
+            for i, pairing in enumerate(bracket, start=1):
+                participant1, participant2 = pairing
+                print(
+                    f'  Match {i}: {participant1["name"]} ({participant1["school"]}) vs {participant2["name"]} ({participant2["school"]})'
                 )
-                for i, pairing in enumerate(bracket, start=1):
-                    participant1, participant2 = pairing
-                    print(
-                        f'  Match {i}: {participant1["name"]} ({participant1["school"]}) vs {participant2["name"]} ({participant2["school"]})'
-                    )
 
-                    out.write(
-                        f"\n{i},{age_group},{participant1['gender']},{weight_class},{participant1['name']},{participant1['school']},{participant2['name']},{participant2['school']}"
-                    )
+                matches.append(
+                    f"\n{i},{age_group},{participant1['gender']},{weight_class},{participant1['name']},{participant1['school']},{participant2['name']},{participant2['school']}"
+                )
+            upload_to_s3("".join(matches), f"{key}.csv")
 
-    with open("exhibition_entries.csv", "w") as out:
-        out.write("name,belt,age,gender,weight,weight_class,school")
-        for entry in single_entry_div:
-            out.write(
-                f"\n{entry['name']},{entry['belt']},{entry['age']},{entry['gender']},{entry['weight']},{entry['weight_class']},{participant1['school']}"
-            )
+    exhibition_entries = ["name,belt,age,gender,weight,weight_class,school"]
+    for entry in single_entry_div:
+        exhibition_entries.append(
+            f"\n{entry['name']},{entry['belt']},{entry['age']},{entry['gender']},{entry['weight']},{entry['weight_class']},{participant1['school']}"
+        )
+    upload_to_s3("".join(exhibition_entries), "exhibition_entries.csv")
 
 
 if __name__ == "__main__":
