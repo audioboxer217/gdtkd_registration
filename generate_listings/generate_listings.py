@@ -36,6 +36,29 @@ def get_current_entries():
     return result
 
 
+def get_coaches():
+    dynamodb = boto3.client("dynamodb")
+    items = dynamodb.scan(
+        TableName=table_name,
+        FilterExpression="reg_type = :coach",
+        ExpressionAttributeValues={
+            ":coach": {
+                "S": "coach",
+            },
+        },
+    )["Items"]
+    result = []
+    for item in items:
+        result.append(
+            dict(
+                name=item["full_name"]["S"],
+                school=item["school"]["S"],
+            )
+        )
+
+    return result
+
+
 def get_age_group(entry):
     age_groups = {
         "dragon": [6, 7],
@@ -278,6 +301,9 @@ def main():
     entries = get_current_entries()
     entries = set_weight_class(entries)
     upload_to_s3(json.dumps(entries, indent=2, default=str), "entries.json")
+
+    coaches = get_coaches()
+    upload_to_s3(json.dumps(coaches, indent=2, default=str), "coaches.json")
 
     divisions = group_divisions(entries)
     single_entry_div = []
