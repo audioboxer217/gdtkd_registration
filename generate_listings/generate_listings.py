@@ -1,6 +1,7 @@
 import os
 import json
 import boto3
+import random
 
 
 table_name = os.getenv("DB_TABLE")
@@ -35,7 +36,30 @@ def get_current_entries():
     return result
 
 
-def set_weight_class(entries):
+def get_coaches():
+    dynamodb = boto3.client("dynamodb")
+    items = dynamodb.scan(
+        TableName=table_name,
+        FilterExpression="reg_type = :coach",
+        ExpressionAttributeValues={
+            ":coach": {
+                "S": "coach",
+            },
+        },
+    )["Items"]
+    result = []
+    for item in items:
+        result.append(
+            dict(
+                name=item["full_name"]["S"],
+                school=item["school"]["S"],
+            )
+        )
+
+    return result
+
+
+def get_age_group(entry):
     age_groups = {
         "dragon": [6, 7],
         "tiger": [8, 9],
@@ -45,6 +69,29 @@ def set_weight_class(entries):
         "senior": list(range(17, 33)),
         "ultra": list(range(33, 100)),
     }
+
+    age_group = next(
+        (group for group, ages in age_groups.items() if int(entry["age"]) in ages)
+    )
+
+    return age_group
+
+
+def get_belt_group(entry):
+    belt_groups = {
+        "low": ["white", "yellow", "orange"],
+        "middle": ["green", "blue"],
+        "high": ["red", "brown"],
+        "black": ["black"],
+    }
+    belt_group = next(
+        (group for group, belts in belt_groups.items() if entry["belt"] in belts)
+    )
+
+    return belt_group
+
+
+def set_weight_class(entries):
     weight_classes = {
         "dragon": {
             "male": {
@@ -179,9 +226,7 @@ def set_weight_class(entries):
     }
     updated_entries = []
     for entry in entries:
-        age_group = next(
-            (group for group, ages in age_groups.items() if int(entry["age"]) in ages)
-        )
+        age_group = get_age_group(entry)
         weight_class_ranges = weight_classes[age_group][entry["gender"]]
         entry["weight_class"] = next(
             weight_class
@@ -194,83 +239,103 @@ def set_weight_class(entries):
     return updated_entries
 
 
-def upload_to_s3(entries):
+def group_divisions(entries):
+    divisions = {}
+    sparring_entries = list(
+        filter(lambda x: "sparring" in x["events"].split(","), entries)
+    )
+
+    for entry in sparring_entries:
+        age_group = get_age_group(entry)
+        belt_group = get_belt_group(entry)
+        key = f"{belt_group}_{age_group}_{entry['gender'][0]}_{entry['weight_class']}"
+        if key not in divisions:
+            divisions[key] = []
+        divisions[key].append(entry)
+
+    return divisions
+
+
+def generate_division_bracket(entries):
+    pairings = []
+    full_brackets = len(entries) & (len(entries) - 1)
+    if full_brackets == 0:
+        full_brackets = len(entries)
+        addl_matches = 0
+    else:
+        addl_matches = len(entries) - full_brackets
+
+    random.shuffle(entries)  # Shuffle entries for random pairings
+    while len(entries) > addl_matches:
+        current_entry = entries.pop()
+
+        for i, entry in enumerate(entries):
+            if entry["school"] != current_entry["school"]:
+                pairings.append((current_entry, entries.pop(i)))
+                break
+
+    for i, entry in enumerate(entries):
+        winner_placeholder = dict(
+            name=f"W{i+1}",
+            gender=pairings[0][0]["gender"],
+            belt=pairings[0][0]["belt"],
+            age="TBD",
+            weight="TBD",
+            school="TBD",
+        )
+        pairings.append((entries.pop(i), winner_placeholder))
+    return pairings
+
+
+def upload_to_s3(contents, filename):
     s3 = boto3.client("s3")
-    print(f"Uploading entries.json to {bucket_name}")
+    print(f"Uploading {filename} to {bucket_name}")
     s3.put_object(
         Bucket=bucket_name,
-        Key="entries.json",
-        Body=entries,
+        Key=filename,
+        Body=contents,
     )
 
 
 def main():
-    if os.getenv("ENVIRONMENT") == "prod":
-        entries = get_current_entries()
-    else:
-        entries = [
-            {
-                "name": "Ciin Sing",
-                "gender": "female",
-                "belt": "black",
-                "age": "11",
-                "weight": "35.30",
-                "school": "GDTKD",
-                "events": "sparring,poomsae",
-            },
-            {
-                "name": "Mackenzie Wilson",
-                "gender": "female",
-                "belt": "brown",
-                "age": "11",
-                "weight": "31.10",
-                "school": "GDTKD",
-                "events": "poomsae,breaking,pair poomsae",
-            },
-            {
-                "name": "Jensen Eppler",
-                "gender": "female",
-                "belt": "black",
-                "age": "11",
-                "weight": "37.19",
-                "school": "GDTKD",
-                "events": "sparring,pair poomsae",
-            },
-            {
-                "name": "Jackson Dillingham",
-                "gender": "male",
-                "belt": "black",
-                "age": "13",
-                "weight": "47.10",
-                "school": "GDTKD",
-                "events": "sparring,poomsae",
-            },
-            {
-                "name": "Braden Gile",
-                "gender": "male",
-                "belt": "black",
-                "age": "14",
-                "weight": "47.19",
-                "school": "GDTKD",
-                "events": "sparring,breaking",
-            },
-            {
-                "name": "Lane Grossman",
-                "gender": "male",
-                "belt": "red",
-                "age": "13",
-                "weight": "46.50",
-                "school": "GDTKD",
-                "events": "poomsae,breaking,team poomsae",
-            },
-        ]
-
+    entries = get_current_entries()
     entries = set_weight_class(entries)
-    upload_to_s3(json.dumps(entries, indent=2, default=str))
-    # IDEA: if I need to filter by event
-    # for event in ["sparring", "poomsae"]:
-    #     event_entries = list(filter(lambda x: event in x["events"].split(","), entries))
-    #     upload_to_s3(json.dumps(entries, indent=2, default=str), event)
+    upload_to_s3(json.dumps(entries, indent=2, default=str), "entries.json")
+
+    coaches = get_coaches()
+    upload_to_s3(json.dumps(coaches, indent=2, default=str), "coaches.json")
+
+    divisions = group_divisions(entries)
+    single_entry_div = []
+    for key, value in divisions.items():
+        age_group = key.split("_")[1]
+        weight_class = key.split("_")[3]
+        print(f"Group {key}:")
+        if len(value) == 1:
+            single_entry_div.append(value[0])
+            print(f"Single competitor {value[0]['name']} added to exhibition list.")
+        else:
+            bracket = generate_division_bracket(value)
+            matches = [
+                "#Game Gr.,#Class,#Gender,#Weight,#Chung Name,#Chung Belongs To,#Hong Name,#Hong Belongs To"
+            ]
+            for i, pairing in enumerate(bracket, start=1):
+                participant1, participant2 = pairing
+                print(
+                    f'  Match {i}: {participant1["name"]} ({participant1["school"]}) vs {participant2["name"]} ({participant2["school"]})'
+                )
+
+                matches.append(
+                    f"\n{i},{age_group},{participant1['gender']},{weight_class},{participant1['name']},{participant1['school']},{participant2['name']},{participant2['school']}"
+                )
+            upload_to_s3("".join(matches), f"{key}.csv")
+
+    exhibition_entries = ["name,belt,age,gender,weight,weight_class,school"]
+    for entry in single_entry_div:
+        exhibition_entries.append(
+            f"\n{entry['name']},{entry['belt']},{entry['age']},{entry['gender']},{entry['weight']},{entry['weight_class']},{participant1['school']}"
+        )
+    upload_to_s3("".join(exhibition_entries), "exhibition_entries.csv")
 
 
 if __name__ == "__main__":
