@@ -1,4 +1,5 @@
 import os
+import json
 import boto3
 import random
 
@@ -276,7 +277,7 @@ def upload_to_s3(entries, filename):
 def main():
     entries = get_current_entries()
     entries = set_weight_class(entries)
-    # upload_to_s3(json.dumps(entries, indent=2, default=str), "entries.json")
+    upload_to_s3(json.dumps(entries, indent=2, default=str), "entries.json")
 
     divisions = group_divisions(entries)
     single_entry_div = []
