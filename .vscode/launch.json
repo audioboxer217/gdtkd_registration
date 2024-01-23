@@ -26,10 +26,33 @@
       "justMyCode": true
     },
     {
-      "name":"Python: Current File",
+      "name":"Python: Backend Script",
       "type":"python",
       "request":"launch",
       "program":"${file}",
+      "cwd": "${fileDirname}",
+      "python": "${workspaceFolder}/backend/.venv/bin/python",
+      "envFile": "${workspaceFolder}/backend.env",
+      "console":"integratedTerminal",
+      "justMyCode":true
+    },
+    {
+      "name":"Python: Frontend Script",
+      "type":"python",
+      "request":"launch",
+      "program":"${file}",
+      "cwd": "${fileDirname}",
+      "python": "${workspaceFolder}/frontend/.venv/bin/python",
+      "envFile": "${workspaceFolder}/frontend.env",
+      "console":"integratedTerminal",
+      "justMyCode":true
+    },
+    {
+      "name":"Python: GL Script",
+      "type":"python",
+      "request":"launch",
+      "program":"${file}",
+      "cwd": "${fileDirname}",
       "python": "${workspaceFolder}/generate_listings/.venv/bin/python",
       "envFile": "${workspaceFolder}/frontend.env",
       "console":"integratedTerminal",
