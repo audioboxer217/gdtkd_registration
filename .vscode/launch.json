@@ -27,18 +27,18 @@
     },
     {
       "name":"Python: Backend Script",
-      "type":"python",
+      "type":"debugpy",
       "request":"launch",
       "program":"${file}",
       "cwd": "${fileDirname}",
-      "python": "${workspaceFolder}/backend/.venv/bin/python",
+      "python": "${workspaceFolder}/backend/.dev_venv/bin/python",
       "envFile": "${workspaceFolder}/backend.env",
       "console":"integratedTerminal",
       "justMyCode":true
     },
     {
       "name":"Python: Frontend Script",
-      "type":"python",
+      "type":"debugpy",
       "request":"launch",
       "program":"${file}",
       "cwd": "${fileDirname}",
@@ -49,7 +49,7 @@
     },
     {
       "name":"Python: GL Script",
-      "type":"python",
+      "type":"debugpy",
       "request":"launch",
       "program":"${file}",
       "cwd": "${fileDirname}",
