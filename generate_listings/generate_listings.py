@@ -220,7 +220,7 @@ def set_weight_class(entries):
                 "fin": (0, 48.99),
                 "light": (49, 56.99),
                 "middle": (57, 66.99),
-                "heavy": (67, 50),
+                "heavy": (67, 199),
             },
         },
     }
