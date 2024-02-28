@@ -333,7 +333,7 @@ def main():
     exhibition_entries = ["name,belt,age,gender,weight,weight_class,school"]
     for entry in single_entry_div:
         exhibition_entries.append(
-            f"\n{entry['name']},{entry['belt']},{entry['age']},{entry['gender']},{entry['weight']},{entry['weight_class']},{participant1['school']}"
+            f"\n{entry['name']},{entry['belt']},{entry['age']},{entry['gender']},{entry['weight']},{entry['weight_class']},{entry['school']}"
         )
     upload_to_s3("".join(exhibition_entries), "exhibition_entries.csv")
 
