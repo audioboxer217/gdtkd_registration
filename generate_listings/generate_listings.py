@@ -179,7 +179,7 @@ def set_weight_class(entries):
                 "fly": (42, 43.99),
                 "bantham": (44, 45.99),
                 "feather": (46, 48.99),
-                "light": (49, 50.99),
+                "light": (49, 51.99),
                 "welter": (52, 54.99),
                 "light middle": (55, 58.99),
                 "middle": (59, 62.99),
