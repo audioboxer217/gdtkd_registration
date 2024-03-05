@@ -244,11 +244,36 @@ def group_divisions(entries):
     sparring_entries = list(
         filter(lambda x: "sparring" in x["events"].split(","), entries)
     )
-
     for entry in sparring_entries:
         age_group = get_age_group(entry)
         belt_group = get_belt_group(entry)
         key = f"{belt_group}_{age_group}_{entry['gender'][0]}_{entry['weight_class']}"
+        if key not in divisions:
+            divisions[key] = []
+        divisions[key].append(entry)
+
+    sparring_gr_entries = list(
+        filter(lambda x: "sparring-gr" in x["events"].split(","), entries)
+    )
+    for entry in sparring_gr_entries:
+        age_group = get_age_group(entry)
+        belt_group = get_belt_group(entry)
+        key = (
+            f"{belt_group}-gr_{age_group}_{entry['gender'][0]}_{entry['weight_class']}"
+        )
+        if key not in divisions:
+            divisions[key] = []
+        divisions[key].append(entry)
+
+    sparring_wc_entries = list(
+        filter(lambda x: "sparring-wc" in x["events"].split(","), entries)
+    )
+    for entry in sparring_wc_entries:
+        age_group = get_age_group(entry)
+        belt_group = get_belt_group(entry)
+        key = (
+            f"{belt_group}-wc_{age_group}_{entry['gender'][0]}_{entry['weight_class']}"
+        )
         if key not in divisions:
             divisions[key] = []
         divisions[key].append(entry)
