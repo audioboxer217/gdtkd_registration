@@ -4,6 +4,7 @@ frontend.json
 
 ## General Items ##
 *.env
+*.csv
 
 ## Python Items ##
 # Byte-compiled / optimized / DLL files
