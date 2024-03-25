@@ -1,3 +1,10 @@
+locals {
+  common_tags = {
+    "TF_Workspace" = var.tf_workspace
+    "Terraform"    = "true"
+  }
+}
+
 module "registration_infra" {
   source  = "app.terraform.io/OKTKD/tkd-registration/kseppler"
   version = "~>0.0.5"
@@ -14,6 +21,7 @@ module "registration_infra" {
   config_bucket_prefix            = var.config_bucket_prefix
   public_media_bucket_prefix      = var.public_media_bucket_prefix
   domain_name                     = var.domain_name
+  common_tags                     = local.common_tags
 }
 
 resource "aws_s3_object" "backend_json" {
@@ -37,6 +45,7 @@ resource "aws_s3_object" "backend_json" {
   content_type           = "application/json"
   server_side_encryption = "AES256"
   storage_class          = "STANDARD"
+  tags                   = local.common_tags
 }
 
 resource "aws_s3_object" "frontend_json" {
@@ -58,4 +67,5 @@ resource "aws_s3_object" "frontend_json" {
   content_type           = "application/json"
   server_side_encryption = "AES256"
   storage_class          = "STANDARD"
+  tags                   = local.common_tags
 }

@@ -1,3 +1,14 @@
+# General Inputs
+variable "tf_workspace" {
+  type        = string
+  description = "The name of the Workspace in Terraform Cloud that manages this deployment"
+}
+
+variable "application_name" {
+  type        = string
+  description = "The name to use for the AWS Appication"
+}
+
 # Competition Details
 variable "domain_name" {
   type        = string
