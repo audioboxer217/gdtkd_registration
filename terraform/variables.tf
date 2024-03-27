@@ -64,11 +64,6 @@ variable "stripe_api_key" {
   description = "The API Key for Stripe."
 }
 
-variable "stripe_prices" {
-  type        = map(string)
-  description = "The mapping of Price objects in Stripe."
-}
-
 # AWS Resource Inputs
 variable "processing_queue_name" {
   type        = string
