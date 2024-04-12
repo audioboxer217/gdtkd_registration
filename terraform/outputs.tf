@@ -22,8 +22,3 @@ output "domain_name_servers" {
   description = "The list of name servers for the domain."
   value       = module.registration_infra.domain_name_servers
 }
-
-output "certificate_arn" {
-  description = "The ARN for the domain certificate"
-  value       = aws_acm_certificate.main.arn
-}
