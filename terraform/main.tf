@@ -57,6 +57,8 @@ resource "aws_s3_object" "frontend_json" {
     REG_URL             = "https://${var.domain_name}"
     COMPETITION_NAME    = var.competition_name
     COMPETITION_YEAR    = var.competition_year
+    EARLY_REG_DATE      = var.early_reg_date
+    REG_CLOSE_DATE      = var.reg_close_date
     CONTACT_EMAIL       = var.contact_email
     PROFILE_PIC_BUCKET  = module.registration_infra.profile_pics_bucket_name
     CONFIG_BUCKET       = module.registration_infra.config_bucket_name

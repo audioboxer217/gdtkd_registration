@@ -46,6 +46,15 @@ variable "competition_year" {
   description = "The year of the competition."
 }
 
+variable "early_reg_date" {
+  type        = string
+  description = "The date when Early Registration closes."
+}
+
+variable "reg_close_date" {
+  type        = string
+  description = "The date when Final Registration closes."
+}
 variable "contact_email" {
   type        = string
   description = "The email to give to users as a contact."
