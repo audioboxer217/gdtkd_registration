@@ -183,3 +183,6 @@ cython_debug/
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# test vars files
+secure.auto.tfvars
