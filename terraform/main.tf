@@ -65,6 +65,8 @@ resource "aws_s3_object" "frontend_json" {
     PUBLIC_MEDIA_BUCKET = module.registration_infra.public_media_bucket_name
     SQS_QUEUE_URL       = module.registration_infra.processing_queue_url
     DB_TABLE            = var.registration_table_name
+    VISITOR_INFO_URL    = var.visitor_info_url
+    VISITOR_INFO_TEXT   = var.visitor_info_text
   }))
   content_type           = "application/json"
   server_side_encryption = "AES256"
