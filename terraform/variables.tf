@@ -138,3 +138,13 @@ variable "public_media_bucket_prefix" {
   description = "The prefix to use for bucket that will hold the public media."
   default     = "tkd-reg-public-media"
 }
+
+variable "visitor_info_url" {
+  type        = string
+  description = "URL to use for the visitor information link."
+}
+
+variable "visitor_info_text" {
+  type        = string
+  description = "Text to use for the visitor information link."
+}

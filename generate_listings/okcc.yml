@@ -1,0 +1,19 @@
+---
+dev:
+    app_function: generate_listings.main
+    apigateway_enabled: false
+    aws_region: us-east-1
+    profile_name: personal
+    project_name: listings
+    runtime: python3.11
+    s3_bucket: zappa-okc-chmp-listings-dev
+    keep_warm: false
+    events:
+      - function: generate_listings.main
+        expression: cron(30 5 * * ? *)
+    remote_env: s3://okc-chmp-reg-config/backend.json
+    environment_variables:
+      ENVIRONMENT: dev
+    parameter_depth: 1
+    memory_size: 512
+    use_precompiled_packages: true
