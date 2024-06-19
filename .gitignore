@@ -1,6 +1,7 @@
 ## Specific Items ##
 backend.json
 frontend.json
+.environments/*
 
 ## General Items ##
 *.env
