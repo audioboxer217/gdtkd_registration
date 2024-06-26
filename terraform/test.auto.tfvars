@@ -1,6 +1,6 @@
 application_name                = "2024-OKCHMP-Registration-Dev"
 badges_bucket_name              = "okchmp-dev-reg-badges"
-competition_name                = "Oklahoma Championship"
+competition_name                = "OKC Taekwondo Championship"
 competition_year                = "2024"
 early_reg_date                  = "August 18, 2024"
 reg_close_date                  = "September 1, 2024"
