@@ -187,3 +187,4 @@ terraform.rc
 
 # test vars files
 secure.auto.tfvars
+*.secure.tfvars
