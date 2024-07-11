@@ -1,5 +1,6 @@
 import os
-import random
+import asyncio
+import challonge
 import generate_listings as gl
 
 competition_name = os.getenv("COMPETITION_NAME").replace(" ","_")
@@ -60,34 +61,48 @@ def group_divisions(entries):
     return divisions
 
 
-def generate_division_bracket(entries):
+async def generate_division_bracket(division, entries):
+    entries = sorted(entries, key=lambda d: d['school'])
+
+    c = await challonge.get_user(os.getenv("CHALLONGE_USERNAME"), os.getenv("CHALLONGE_PASSWORD"))
+    tournament = await c.create_tournament(
+        name = f"{competition_name}_{division}",
+        url = f"{competition_name}_{division.replace(' ','_').replace('-','_')}",
+    )
+
+    for e in entries:
+        await tournament.add_participant(display_name=e['name'], misc=e['school'])
+    
+    await tournament.start()
+
+    return tournament
+
+
+async def get_match_details(bracket):
+    matches = await bracket.get_matches()
+
     pairings = []
-    full_brackets = len(entries) & (len(entries) - 1)
-    if full_brackets == 0:
-        full_brackets = len(entries)
-        addl_matches = 0
-    else:
-        addl_matches = len(entries) - full_brackets
+    for match in matches:
+        if match.round == 1:
+            participant1 = await bracket.get_participant(match.player1_id)
+            participant2 = await bracket.get_participant(match.player2_id)
 
-    random.shuffle(entries)  # Shuffle entries for random pairings
-    while len(entries) > addl_matches:
-        current_entry = entries.pop()
+        if match.round == 2:
+            if match.player1_id is not None:
+                participant1 = await bracket.get_participant(match.player1_id)
+            else:
+                continue
+            if match.player2_id is not None:
+                participant2 = await bracket.get_participant(match.player2_id)
+            else:
+                prev_match = await bracket.get_match(match.player2_prereq_match_id)
+                c = await challonge.get_user(os.getenv("CHALLONGE_USERNAME"), os.getenv("CHALLONGE_PASSWORD"))
+                participant2 = challonge.Participant(c,{},bracket)
+                participant2.name = f"Winner of Match {prev_match.identifier}"
+                participant2.misc = "TBD"
 
-        for i, entry in enumerate(entries):
-            if entry["school"] != current_entry["school"]:
-                pairings.append((current_entry, entries.pop(i)))
-                break
+        pairings.append((participant1,participant2))
 
-    for i, entry in enumerate(entries):
-        winner_placeholder = dict(
-            name=f"W{i+1}",
-            gender=pairings[0][0]["gender"],
-            belt=pairings[0][0]["belt"],
-            age="TBD",
-            weight="TBD",
-            school="TBD",
-        )
-        pairings.append((entries.pop(i), winner_placeholder))
     return pairings
 
 
@@ -105,18 +120,21 @@ def main():
             single_entry_div.append(competitors[0])
             print(f"Single competitor {competitors[0]['name']} added to exhibition list.")
         else:
-            bracket = generate_division_bracket(competitors)
+            loop = asyncio.get_event_loop()
+            bracket = loop.run_until_complete(generate_division_bracket(key, competitors))
+            print(f"Bracket: {bracket.live_image_url}")
             matches = [
                 "#Game Gr.,#Class,#Gender,#Weight,#Chung Name,#Chung Belongs To,#Hong Name,#Hong Belongs To"
             ]
-            for i, pairing in enumerate(bracket, start=1):
+            pairings = loop.run_until_complete(get_match_details(bracket))
+            for i, pairing in enumerate(pairings, start=1):
                 participant1,participant2 = pairing
                 print(
-                    f'  Match {i}: {participant1["name"]} ({participant1["school"]}) vs {participant2["name"]} ({participant2["school"]})'
+                    f'  Match {i}: {participant1.name} ({participant1.misc}) vs {participant2.name} ({participant2.misc})'
                 )
 
                 matches.append(
-                    f"\n{i},{age_group},{gender},{weight_class},{participant1['name']},{participant1['school']},{participant2['name']},{participant2['school']}"
+                    f"\n{i},{age_group},{gender},{weight_class},{participant1.name},{participant1.misc},{participant2.name},{participant2.misc}"
                 )
             # gl.upload_to_s3("".join(matches), f"{key}.csv")
 
