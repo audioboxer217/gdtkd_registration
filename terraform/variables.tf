@@ -59,6 +59,10 @@ variable "contact_email" {
   type        = string
   description = "The email to give to users as a contact."
 }
+variable "admin_email" {
+  type        = string
+  description = "The email to use for sending admin-related items."
+}
 
 # API Details
 variable "maps_api_key" {
@@ -137,4 +141,14 @@ variable "public_media_bucket_prefix" {
   type        = string
   description = "The prefix to use for bucket that will hold the public media."
   default     = "tkd-reg-public-media"
+}
+
+variable "visitor_info_url" {
+  type        = string
+  description = "URL to use for the visitor information link."
+}
+
+variable "visitor_info_text" {
+  type        = string
+  description = "Text to use for the visitor information link."
 }

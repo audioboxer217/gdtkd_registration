@@ -32,6 +32,7 @@ resource "aws_s3_object" "backend_json" {
     EMAIL_PORT         = var.email_send_port
     EMAIL_PASSWD       = var.email_send_password
     FROM_EMAIL         = var.email_send_address
+    ADMIN_EMAIL        = var.admin_email
     STRIPE_API_KEY     = var.stripe_api_key
     COMPETITION_NAME   = var.competition_name
     COMPETITION_YEAR   = var.competition_year
@@ -65,6 +66,8 @@ resource "aws_s3_object" "frontend_json" {
     PUBLIC_MEDIA_BUCKET = module.registration_infra.public_media_bucket_name
     SQS_QUEUE_URL       = module.registration_infra.processing_queue_url
     DB_TABLE            = var.registration_table_name
+    VISITOR_INFO_URL    = var.visitor_info_url
+    VISITOR_INFO_TEXT   = var.visitor_info_text
   }))
   content_type           = "application/json"
   server_side_encryption = "AES256"
