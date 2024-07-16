@@ -59,6 +59,10 @@ variable "contact_email" {
   type        = string
   description = "The email to give to users as a contact."
 }
+variable "admin_email" {
+  type        = string
+  description = "The email to use for sending admin-related items."
+}
 
 # API Details
 variable "maps_api_key" {

@@ -32,6 +32,7 @@ resource "aws_s3_object" "backend_json" {
     EMAIL_PORT         = var.email_send_port
     EMAIL_PASSWD       = var.email_send_password
     FROM_EMAIL         = var.email_send_address
+    ADMIN_EMAIL        = var.admin_email
     STRIPE_API_KEY     = var.stripe_api_key
     COMPETITION_NAME   = var.competition_name
     COMPETITION_YEAR   = var.competition_year
