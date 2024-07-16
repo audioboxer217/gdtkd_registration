@@ -1,3 +1,4 @@
+admin_email                     = "audioboxer217@gmail.com"
 application_name                = "2024-OKCHMP-Registration-Dev"
 badges_bucket_name              = "okchmp-dev-reg-badges"
 competition_name                = "OKC Taekwondo Championship"
