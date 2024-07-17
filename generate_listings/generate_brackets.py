@@ -1,16 +1,85 @@
 import os
+import json
+import boto3
 import asyncio
 import challonge
-import generate_listings as gl
 
+table_name = os.getenv("DB_TABLE")
+bucket_name = os.getenv("CONFIG_BUCKET")
 competition_name = os.getenv("COMPETITION_NAME").replace(" ","_")
+
+def get_current_entries():
+    dynamodb = boto3.client("dynamodb")
+    items = dynamodb.scan(
+        TableName=table_name,
+        FilterExpression="reg_type = :competitor",
+        ExpressionAttributeValues={
+            ":competitor": {
+                "S": "competitor",
+            },
+        },
+    )["Items"]
+    result = []
+    for item in items:
+        result.append(
+            dict(
+                name=item["full_name"]["S"],
+                gender=item["gender"]["S"],
+                belt=item["beltRank"]["S"],
+                age=item["age"]["N"],
+                weight=item["weight"]["N"],
+                school=item["school"]["S"],
+                events=item["events"]["S"],
+            )
+        )
+
+    return result
+
+
+def get_age_group(entry):
+    age_groups = {
+        "dragon": [5, 6, 7],
+        "tiger": [8, 9],
+        "youth": [10, 11],
+        "cadet": [12, 13, 14],
+        "junior": [15, 16],
+        "senior": list(range(17, 33)),
+        "ultra": list(range(33, 100)),
+    }
+
+    age_group = next(
+        (group for group, ages in age_groups.items() if int(entry["age"]) in ages)
+    )
+
+    return age_group
+
+
+def set_weight_class(entries):
+    s3 = boto3.client("s3")
+    weight_classes = json.load(
+            s3.get_object(Bucket=bucket_name, Key="weight_classes.json")["Body"]
+        )
+    updated_entries = []
+    for entry in entries:
+        age_group = get_age_group(entry)
+        weight_class_ranges = weight_classes[age_group][entry["gender"]]
+        entry["weight_class"] = next(
+            weight_class
+            for weight_class, weights in weight_class_ranges.items()
+            if float(entry["weight"]) >= float(weights[0])
+            and float(entry["weight"]) < float(weights[1])
+        )
+        updated_entries.append(entry)
+
+    return updated_entries
+
 
 def get_belt_group(entry):
     belt_groups = {
         "low": ["white", "yellow", "orange"],
         "middle": ["green", "blue"],
         "high": ["red", "brown"],
-        "black": ["black"],
+        "black": ["black", "1 black", "2 black", "3 black", "master black"],
     }
     belt_group = next(
         (group for group, belts in belt_groups.items() if entry["belt"] in belts)
@@ -25,7 +94,7 @@ def group_divisions(entries):
         filter(lambda x: "sparring" in x["events"].split(","), entries)
     )
     for entry in sparring_entries:
-        age_group = gl.get_age_group(entry)
+        age_group = get_age_group(entry)
         belt_group = get_belt_group(entry)
         key = f"{belt_group}_{age_group}_{entry['gender'][0]}_{entry['weight_class']}"
         if key not in divisions:
@@ -36,7 +105,7 @@ def group_divisions(entries):
         filter(lambda x: "sparring-gr" in x["events"].split(","), entries)
     )
     for entry in sparring_gr_entries:
-        age_group = gl.get_age_group(entry)
+        age_group = get_age_group(entry)
         belt_group = get_belt_group(entry)
         key = (
             f"{belt_group}-gr_{age_group}_{entry['gender'][0]}_{entry['weight_class']}"
@@ -49,7 +118,7 @@ def group_divisions(entries):
         filter(lambda x: "sparring-wc" in x["events"].split(","), entries)
     )
     for entry in sparring_wc_entries:
-        age_group = gl.get_age_group(entry)
+        age_group = get_age_group(entry)
         belt_group = get_belt_group(entry)
         key = (
             f"{belt_group}-wc_{age_group}_{entry['gender'][0]}_{entry['weight_class']}"
@@ -106,9 +175,19 @@ async def get_match_details(bracket):
     return pairings
 
 
+def upload_to_s3(contents, filename):
+    s3 = boto3.client("s3")
+    print(f"Uploading {filename} to {bucket_name}")
+    s3.put_object(
+        Bucket=bucket_name,
+        Key=filename,
+        Body=contents,
+    )
+
+
 def main():
-    entries = gl.get_current_entries()
-    entries = gl.set_weight_class(entries)
+    entries = get_current_entries()
+    entries = set_weight_class(entries)
     divisions = group_divisions(entries)
     single_entry_div = []
     for key, competitors in divisions.items():
@@ -136,14 +215,14 @@ def main():
                 matches.append(
                     f"\n{i},{age_group},{gender},{weight_class},{participant1.name},{participant1.misc},{participant2.name},{participant2.misc}"
                 )
-            # gl.upload_to_s3("".join(matches), f"{key}.csv")
+            # upload_to_s3("".join(matches), f"{key}.csv")
 
     exhibition_entries = ["name,belt,age,gender,weight,weight_class,school"]
     for entry in single_entry_div:
         exhibition_entries.append(
             f"\n{entry['name']},{entry['belt']},{entry['age']},{entry['gender']},{entry['weight']},{entry['weight_class']},{entry['school']}"
         )
-    # gl.upload_to_s3("".join(exhibition_entries), "exhibition_entries.csv")
+    # upload_to_s3("".join(exhibition_entries), "exhibition_entries.csv")
 
 
 if __name__ == "__main__":
